@@ -1,5 +1,6 @@
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -174,5 +175,107 @@ public class University {
             students.add(student);
         }
     }
+
+    //---------------------------------------------------------------------------------------------
+
+    public void searchInXML(String criteria, String value) {
+        try {
+            File file = new File("students.xml");
+            if (!file.exists()) {
+                System.out.println("No XML file found to search.");
+                return;
+            }
+
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(file);
+            doc.getDocumentElement().normalize();
+
+            NodeList studentNodes = doc.getElementsByTagName("Student");
+            boolean found = false;
+
+            for (int i = 0; i < studentNodes.getLength(); i++) {
+                Element student = (Element) studentNodes.item(i);
+                String matchValue;
+
+                if ("GPA".equalsIgnoreCase(criteria)) {
+                    matchValue = student.getElementsByTagName("GPA").item(0).getTextContent();
+                } else if ("FirstName".equalsIgnoreCase(criteria)) {
+                    matchValue = student.getElementsByTagName("FirstName").item(0).getTextContent();
+                } else {
+                    System.out.println("Invalid search criteria. Use 'GPA' or 'FirstName'.");
+                    return;
+                }
+
+                if (matchValue.equalsIgnoreCase(value)) {
+                    System.out.println("Student Found:");
+                    System.out.println("ID: " + student.getAttribute("ID"));
+                    System.out.println("First Name: " + student.getElementsByTagName("FirstName").item(0).getTextContent());
+                    System.out.println("Last Name: " + student.getElementsByTagName("LastName").item(0).getTextContent());
+                    System.out.println("Gender: " + student.getElementsByTagName("Gender").item(0).getTextContent());
+                    System.out.println("GPA: " + student.getElementsByTagName("GPA").item(0).getTextContent());
+                    System.out.println("Level: " + student.getElementsByTagName("Level").item(0).getTextContent());
+                    System.out.println("Address: " + student.getElementsByTagName("Address").item(0).getTextContent() + "\n");
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                System.out.println("No student found with " + criteria + ": " + value);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error searching XML file: " + e.getMessage());
+        }
+    }
+
+    // Method to delete a student record from the XML file by ID
+    public void deleteStudent(String studentID) {
+        try {
+            File file = new File("students.xml");
+            if (!file.exists()) {
+                System.out.println("No XML file found to delete a record.");
+                return;
+            }
+
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(file);
+            doc.getDocumentElement().normalize();
+
+            NodeList studentNodes = doc.getElementsByTagName("Student");
+            boolean deleted = false;
+
+            for (int i = 0; i < studentNodes.getLength(); i++) {
+                Element student = (Element) studentNodes.item(i);
+
+                if (student.getAttribute("ID").equals(studentID)) {
+                    student.getParentNode().removeChild(student);
+                    deleted = true;
+                    break;
+                }
+            }
+
+            if (deleted) {
+                // Save the updated XML file
+                TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                Transformer transformer = transformerFactory.newTransformer();
+                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+                DOMSource source = new DOMSource(doc);
+                StreamResult result = new StreamResult(file);
+                transformer.transform(source, result);
+
+                System.out.println("Student record with ID " + studentID + " has been deleted.");
+            } else {
+                System.out.println("No student found with ID: " + studentID);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error deleting from XML file: " + e.getMessage());
+        }
+    }
+
+
 }
 

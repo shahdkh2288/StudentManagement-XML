@@ -1,30 +1,35 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><University>
-        
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<University>
     <Student ID="20210182">
-                
         <FirstName>shahd</FirstName>
-                
         <LastName>khaled</LastName>
-                
         <Gender>female</Gender>
-                
         <GPA>3.4</GPA>
-                
-        <Level>3</Level>
-                
-        <Address>Giza</Address>
-            
+        <Level>2</Level>
+        <Address>GIZA</Address>
     </Student>
-        
-    
-    
-    
-    <Student ID="20210184">
+    <Student ID="22010192">
         <FirstName>lolo</FirstName>
         <LastName>elshaer</LastName>
-        <Gender>Female</Gender>
+        <Gender>female</Gender>
+        <GPA>3.4</GPA>
+        <Level>2</Level>
+        <Address>Giza</Address>
+    </Student>
+    <Student ID="20210183">
+        <FirstName>koko</FirstName>
+        <LastName>elshae</LastName>
+        <Gender>female</Gender>
         <GPA>3.2</GPA>
         <Level>2</Level>
+        <Address>Giza</Address>
+    </Student>
+    <Student ID="20218212">
+        <FirstName>ahmed</FirstName>
+        <LastName>elshaer</LastName>
+        <Gender>male</Gender>
+        <GPA>3.0</GPA>
+        <Level>3</Level>
         <Address>Giza</Address>
     </Student>
 </University>

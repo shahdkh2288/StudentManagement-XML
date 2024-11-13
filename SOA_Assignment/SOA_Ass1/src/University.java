@@ -1,5 +1,6 @@
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -37,6 +38,8 @@ public class University {
 
 
                 Element rootElement = doc.getDocumentElement();
+                removeWhitespaceNodes(doc);
+
 
 
                 for (Student student : students) {
@@ -72,13 +75,7 @@ public class University {
                 }
 
 
-                TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                Transformer transformer = transformerFactory.newTransformer();
-                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-                DOMSource source = new DOMSource(doc);
-                StreamResult streamResult = new StreamResult(file);
-                transformer.transform(source, streamResult);
+                saveXMLDocument(doc, file);
 
                 System.out.println("New students added to the existing XML file.");
 
@@ -120,13 +117,7 @@ public class University {
                 }
 
 
-                TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                Transformer transformer = transformerFactory.newTransformer();
-                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-                DOMSource source = new DOMSource(doc);
-                StreamResult streamResult = new StreamResult(file);
-                transformer.transform(source, streamResult);
+                saveXMLDocument(doc, file);
 
                 System.out.println("XML file created successfully and students added.");
             }
@@ -273,7 +264,7 @@ public class University {
         }
     }
 
-    // Method to delete a student record from the XML file by ID
+
     public void deleteStudent(String studentID) {
         try {
             File file = new File("students.xml");
@@ -301,7 +292,7 @@ public class University {
             }
 
             if (deleted) {
-                // Save the updated XML file
+
                 TransformerFactory transformerFactory = TransformerFactory.newInstance();
                 Transformer transformer = transformerFactory.newTransformer();
                 DOMSource source = new DOMSource(doc);
@@ -315,6 +306,28 @@ public class University {
 
         } catch (Exception e) {
             System.err.println("Error deleting from XML file: " + e.getMessage());
+        }
+    }
+    private void saveXMLDocument(Document doc, File file) throws TransformerException {
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+        DOMSource source = new DOMSource(doc);
+        StreamResult streamResult = new StreamResult(file);
+        transformer.transform(source, streamResult);
+    }
+
+
+    private void removeWhitespaceNodes(Node node) {
+        NodeList childNodes = node.getChildNodes();
+        for (int i = childNodes.getLength() - 1; i >= 0; i--) {
+            Node child = childNodes.item(i);
+            if (child.getNodeType() == Node.TEXT_NODE && child.getNodeValue().trim().isEmpty()) {
+                node.removeChild(child);
+            } else if (child.getNodeType() == Node.ELEMENT_NODE) {
+                removeWhitespaceNodes(child);
+            }
         }
     }
 

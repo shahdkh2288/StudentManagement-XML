@@ -132,7 +132,20 @@ public class University {
 
     public void getStudentDataFromUser() {
         Scanner scanner = new Scanner(System.in);
-        Set<Integer> existingIds = new HashSet<>();
+        File file = new File("students.xml");
+        Document doc = null;
+        Set<Integer> currentRunIds = new HashSet<>();
+
+        try {
+            if (file.exists()) {
+                DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+                doc = docBuilder.parse(file);
+                doc.getDocumentElement().normalize();
+            }
+        } catch (Exception e) {
+            System.err.println("Error loading XML file: " + e.getMessage());
+        }
 
         System.out.print("Enter the number of students you want to store data about: ");
         int numStudents = scanner.nextInt();
@@ -146,11 +159,12 @@ public class University {
                 System.out.print("ID: ");
                 ID = scanner.nextInt();
                 scanner.nextLine();
-                if (!existingIds.contains(ID)) {
-                    existingIds.add(ID);
+
+                if ((doc == null || !isStudentExists(String.valueOf(ID), doc) && (!currentRunIds.contains(ID)) )) {
+                    currentRunIds.add(ID);
                     break;
                 } else {
-                    System.out.println("This ID already exists. Please enter a unique ID.");
+                    System.out.println("This ID already exists in the XML file or in memory. Please enter a unique ID.");
                 }
             }
 
@@ -210,6 +224,7 @@ public class University {
             students.add(student);
         }
     }
+
 
     //---------------------------------------------------------------------------------------------
 
@@ -331,6 +346,16 @@ public class University {
         }
     }
 
+    private static boolean isStudentExists(String id, Document doc){
+        NodeList studentNodes = doc.getElementsByTagName("Student");
+        for (int i = 0; i < studentNodes.getLength(); i++) {
+            Element student = (Element) studentNodes.item(i);
+            if (student.getAttribute("ID").equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
 

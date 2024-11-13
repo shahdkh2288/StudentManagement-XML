@@ -7,18 +7,18 @@ public class Main {
 
         System.out.println("1-Add new student(s) \n2-Search for Student \n3-Delete Student");
         int choice = in.nextInt();
-        in.nextLine();  // Consume the leftover newline
+        in.nextLine();
 
         switch (choice) {
             case 1:
                 university.getStudentDataFromUser();
-                university.createXMLDocument(); // Save new data after adding students
+                university.createXMLDocument();
                 break;
 
             case 2:
                 System.out.println("1-Search by GPA \n2-Search by First Name");
                 choice = in.nextInt();
-                in.nextLine();  // Consume the leftover newline
+                in.nextLine();
 
                 if (choice == 1) {
                     System.out.println("Enter Student GPA");
@@ -34,14 +34,13 @@ public class Main {
             case 3:
                 System.out.println("Enter Student ID");
                 String id = in.nextLine();
-                university.deleteStudent(id); // Corrected method name
-                university.createXMLDocument(); // Save the changes after deletion
+                university.deleteStudent(id);
                 break;
 
             default:
                 System.out.println("Invalid choice. Please select 1, 2, or 3.");
         }
 
-        in.close(); // Close the scanner to prevent resource leaks
+        in.close();
     }
 }

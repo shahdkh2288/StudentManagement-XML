@@ -15,7 +15,9 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class University {
     private ArrayList<Student> students = new ArrayList<>();
@@ -139,6 +141,8 @@ public class University {
 
     public void getStudentDataFromUser() {
         Scanner scanner = new Scanner(System.in);
+        Set<Integer> existingIds = new HashSet<>();
+
         System.out.print("Enter the number of students you want to store data about: ");
         int numStudents = scanner.nextInt();
         scanner.nextLine();
@@ -146,30 +150,70 @@ public class University {
         for (int i = 0; i < numStudents; i++) {
             System.out.println("Enter details for student #" + (i + 1) + ":");
 
-            System.out.print("ID: ");
-            int ID = scanner.nextInt();
-            scanner.nextLine();
+            int ID;
+            while (true) {
+                System.out.print("ID: ");
+                ID = scanner.nextInt();
+                scanner.nextLine();
+                if (!existingIds.contains(ID)) {
+                    existingIds.add(ID);
+                    break;
+                } else {
+                    System.out.println("This ID already exists. Please enter a unique ID.");
+                }
+            }
 
             System.out.print("First Name: ");
             String firstName = scanner.nextLine();
+            while (firstName.isEmpty()) {
+                System.out.print("First Name cannot be empty. Enter First Name: ");
+                firstName = scanner.nextLine();
+            }
 
             System.out.print("Last Name: ");
             String lastName = scanner.nextLine();
+            while (lastName.isEmpty()) {
+                System.out.print("Last Name cannot be empty. Enter Last Name: ");
+                lastName = scanner.nextLine();
+            }
 
-            System.out.print("Gender: ");
+            System.out.print("Gender (Male/Female): ");
             String gender = scanner.nextLine();
+            while (!gender.equalsIgnoreCase("Male") && !gender.equalsIgnoreCase("Female")) {
+                System.out.print("Invalid gender. Enter Male or Female: ");
+                gender = scanner.nextLine();
+            }
 
             System.out.print("GPA: ");
-            double gpa = scanner.nextDouble();
-            scanner.nextLine();
+            double gpa;
+            while (true) {
+                try {
+                    gpa = Double.parseDouble(scanner.nextLine());
+                    if (gpa >= 0.0 && gpa <= 4.0) break;
+                    else System.out.print("GPA must be between 0.0 and 4.0. Enter GPA: ");
+                } catch (NumberFormatException e) {
+                    System.out.print("Invalid GPA. Enter a number between 0.0 and 4.0: ");
+                }
+            }
 
-            System.out.print("Level: ");
-            int level = scanner.nextInt();
-            scanner.nextLine();
+            System.out.print("Level (1-4): ");
+            int level;
+            while (true) {
+                try {
+                    level = Integer.parseInt(scanner.nextLine());
+                    if (level >= 1 && level <= 4) break;
+                    else System.out.print("Level must be between 1 and 4. Enter Level: ");
+                } catch (NumberFormatException e) {
+                    System.out.print("Invalid level. Enter an integer between 1 and 4: ");
+                }
+            }
 
             System.out.print("Address: ");
             String address = scanner.nextLine();
-
+            while (address.isEmpty()) {
+                System.out.print("Address cannot be empty. Enter Address: ");
+                address = scanner.nextLine();
+            }
 
             Student student = new Student(ID, firstName, lastName, gender, gpa, level, address);
             students.add(student);
@@ -260,8 +304,6 @@ public class University {
                 // Save the updated XML file
                 TransformerFactory transformerFactory = TransformerFactory.newInstance();
                 Transformer transformer = transformerFactory.newTransformer();
-                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
                 DOMSource source = new DOMSource(doc);
                 StreamResult result = new StreamResult(file);
                 transformer.transform(source, result);

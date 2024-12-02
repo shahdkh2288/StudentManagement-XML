@@ -1,4 +1,4 @@
-# Student-Management-XML
+# StudentManagement-XML
 
 This project implements a Student Management System using XML to store student data. The system allows for adding student information, storing it in an XML file, searching by GPA or First Name, and deleting specific records.
 
